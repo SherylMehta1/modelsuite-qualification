@@ -24,7 +24,7 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
 
       {/* Header: title + status */}
       <div className="flex items-start justify-between gap-2.5">
-        <p className="text-[15px] font-semibold text-text-primary leading-snug">{task.title || 'Untitled Task'}</p>
+        <p className="text-[15px] font-semibold text-text-primary leading-snug truncate">{task.title || 'Untitled Task'}</p>
         {task.status && (
           <span className={`shrink-0 inline-block px-2.5 py-[3px] rounded-full text-[11px] font-semibold tracking-[0.3px] ${STATUS_CLASS[task.status] || ''}`}>
             {task.status}
@@ -34,7 +34,7 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
 
       
       {task.description && (
-        <p className="text-[13px] text-text-muted leading-relaxed">{task.description}</p>
+        <p className="text-[13px] text-text-muted leading-relaxed truncate">{task.description}</p>
       )}
 
       {/* Meta row */}
