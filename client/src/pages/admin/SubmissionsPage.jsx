@@ -12,6 +12,8 @@ const REVIEW_STATUS_CLASS = {
 const SubmissionsPage = () => {
   const [submissions, setSubmissions] = useState([]);
   const [reviewTarget, setReviewTarget] = useState(null);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
 
   const loadSubmissions = async () => {
     try {
@@ -28,9 +30,50 @@ const SubmissionsPage = () => {
   const approved = submissions.filter((s) => s.reviewStatus === 'Approved').length;
   const rejected = submissions.filter((s) => s.reviewStatus === 'Rejected').length;
 
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+  
+  const sortedSubmissions = [...submissions].sort((a, b) => {
+    if (!sortField) return 0;
+    let aValue;
+    let bValue;
+    switch (sortField) {
+      case 'task':
+        aValue = a.taskId?.title || '';
+        bValue = b.taskId?.title || '';
+        break;
+
+      case 'talent':
+        aValue = a.talentId?.name || '';
+        bValue = b.talentId?.name || '';
+        break;
+
+      case 'reviewStatus':
+        aValue = a.reviewStatus || '';
+        bValue = b.reviewStatus || '';
+        break;
+
+      case 'submitted':
+        aValue = new Date(a.createdAt || 0);
+        bValue = new Date(b.createdAt || 0);
+        break;
+
+      default:
+        return 0;
+    }
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    
+    return 0;
+  });
   const thCls = 'text-left px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.7px] text-text-faint border-b border-border whitespace-nowrap';
   const tdCls = 'px-5 py-4 border-b border-border align-middle';
-
   return (
     <div className="flex min-h-screen bg-bg-dark">
       <Sidebar />
@@ -77,18 +120,18 @@ const SubmissionsPage = () => {
               <table className="w-full border-collapse text-sm">
                 <thead>
                   <tr className="bg-bg-surface">
-                    <th className={thCls}>Task</th>
-                    <th className={thCls}>Talent</th>
+                    <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('task')}>Task</th>
+                    <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('talent')}>Talent</th>
                     <th className={thCls}>Notes</th>
                     <th className={thCls}>File</th>
                     
-                    <th className={thCls}>Submitted</th>
-                    <th className={thCls}>Review Status</th>
+                    <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('submitted')}>Submitted</th>
+                    <th className={`${thCls} cursor-pointer`} onClick={() => handleSort('reviewStatus')}>Review Status</th>
                     <th className={thCls}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {submissions.map((sub) => (
+                  {sortedSubmissions.map((sub) => (
                     <tr key={sub._id} className="border-b border-border last:border-0 hover:bg-bg-hover transition-colors">
 
                       {/* Task */}
