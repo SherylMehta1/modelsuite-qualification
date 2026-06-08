@@ -70,7 +70,7 @@ const CreateTaskModal = ({ onClose, onCreated }) => {
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>Due Date</label>
               
-              <input type="date" name="dueDate" value={form.dueDate} onChange={handleChange} className={inputCls} />
+              <input type="date" name="dueDate" value={form.dueDate} onChange={handleChange} min={new Date().toISOString().split('T')[0]} className={inputCls} />
             </div>
           </div>
 

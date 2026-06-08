@@ -41,6 +41,18 @@ const createTask = async (req, res) => {
   const { title, description, status, assignedTo, dueDate } = req.body;
 
   try {
+    if (dueDate) {
+      const selectedDate = new Date(dueDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        return res.status(400).json({
+          message: 'Due date cannot be in the past',
+        });
+      }
+    }
     const task = await Task.create({
       title,
       description,
@@ -60,7 +72,20 @@ const createTask = async (req, res) => {
 // @route PUT /api/tasks/:id
 // @access Admin
 const updateTask = async (req, res) => {
+  const { dueDate } = req.body;
   try {
+    if (dueDate) {
+      const selectedDate = new Date(dueDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        return res.status(400).json({
+          message: 'Due date cannot be in the past',
+        });
+      }
+    }
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
     // including internal fields like createdBy or __v
